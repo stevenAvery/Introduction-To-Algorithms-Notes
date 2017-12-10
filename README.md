@@ -111,6 +111,13 @@ author: Steven Avery
 	- repeat on two sub arrays (left of wall and right of wall).
 	- At the end, every element will have all larger elements to the right, and all smaller elements to the left, making it sorted.
 
+- The performance of quicksort depends on whether the partitioning is balanced.
+	- If the partitioning is balanced the algorithm runs as fast as merge sort: O(n lg(n)).
+	- If the partitioning is not balanced the algorithm runs as slow as insertion sort: O(n<sup>2</sup>).
+
+#### A Randomized Version of Quicksort
+- Instead of always using A[r] as the pivot, we swap a random element with A[r] before partitioning.
+
 ### Ch 8: Sorting in Linear Time
 
 ### Ch 9: Medians and Order Statistics

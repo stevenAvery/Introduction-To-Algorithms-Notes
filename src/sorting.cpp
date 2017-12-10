@@ -9,6 +9,8 @@
 #include <functional> // std::function (used to pass function as argument)
 #include <climits>    // INT_MAX for merge sentinal
 #include <math.h>     // floor
+#include <stdlib.h>   // srand, rand
+#include <time.h>     // time (used to seed srand)
 
 #define inf INT_MAX
 
@@ -257,16 +259,61 @@ void quickSort(int A[], size_t ALength) {
 	quickSortRecur(0, ALength);
 }
 
+void randomizedQuickSort(int A[], size_t ALength) {
+	auto partition = [&](int p, int r) -> int {
+		int pivotIndex = r-1;
+		int pivotValue = A[pivotIndex]; // select last element to be pivot
+		int wall = p-1; // set the "wall" to the left of the first element
+
+		// go from the first element to just before the pivot
+		for(int j = p; j < pivotIndex; ++j) {
+			if(A[j] <= pivotValue) {
+				++wall; // move the wall one element to the right
+				swap(A, wall, j);
+			}
+		}
+
+		// move the pivot element to the wall so that all elements to the left
+		//     are less and all elements to the right are more
+		++wall;
+		swap(A, wall, pivotIndex);
+
+		return wall; // return the final pivot point
+	};
+
+	auto randomizedPartition = [&](int p, int r) -> int {
+		// instead of always using A[r] as the pivot
+		//     swap a random element with A[r] before partitioning
+		int i = rand() % (r-p) + p;
+		swap(A, r-1, i);
+		return partition(p, r);
+	};
+
+	std::function<void (int, int)> quickSortRecur;
+	quickSortRecur = [&](int p, int r) {
+		if(p < r) { // a list of one element will always be sorted
+			int q = randomizedPartition(p, r);
+			quickSortRecur(p, q);   // sort the left side of the pivot point
+			quickSortRecur(q+1, r); // sort the right side of the pivot point
+		}
+	};
+
+	// sort the entire array
+	quickSortRecur(0, ALength);
+}
+
 int main(int argc, char** argv) {
+	srand(time(NULL));
 	// int A[] = {8, 7, 6, 5, 4, 3, 2, 1};
 	int A[] = {8, 5, 2, 7, 2, 4, 6, 1, 3};
 	size_t ALength = sizeof(A)/sizeof(A[0]);
 
-	testSort("INSERTION SORT", insertionSort, A, ALength);
-	testSort("BUBBLE SORT",    bubbleSort,    A, ALength);
-	testSort("MERGE SORT",     mergeSort,     A, ALength);
-	testSort("HEAP SORT",      heapSort,      A, ALength);
-	testSort("QUICK SORT",     quickSort,     A, ALength);
+	testSort("INSERTION SORT",        insertionSort,       A, ALength);
+	testSort("BUBBLE SORT",           bubbleSort,          A, ALength);
+	testSort("MERGE SORT",            mergeSort,           A, ALength);
+	testSort("HEAP SORT",             heapSort,            A, ALength);
+	testSort("QUICK SORT",            quickSort,           A, ALength);
+	testSort("RANDOMIZED QUICK SORT", randomizedQuickSort, A, ALength);
 
 	return 0;
 }
