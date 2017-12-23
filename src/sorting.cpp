@@ -11,6 +11,7 @@
 #include <math.h>     // floor
 #include <stdlib.h>   // srand, rand
 #include <time.h>     // time (used to seed srand)
+#include <algorithm>  // std::max_element
 
 #define inf INT_MAX
 
@@ -302,6 +303,46 @@ void randomizedQuickSort(int A[], size_t ALength) {
 	quickSortRecur(0, ALength);
 }
 
+
+// given a list of integers, where every interger is in the range 0..k
+// count the occurence of each possible value (in array C)
+// use this count to get the starting index for each value
+// copy elements of initial array to final proper location based on array C
+void countingSort(int A[], size_t ALength) {
+	// k is the max element; gives a range for possible values from 0..k
+	int k = *std::max_element(A, A+ALength) + 1;
+
+	// will act as the original array, so the proper order will be stored in A
+	int* ACopy = new int[ALength];
+	for(int i = 0; i < ALength; ++i)
+		ACopy[i] = A[i];
+
+	int* C = new int[k] {0}; // the array to track the count of each element
+	// get the number of occurences for each element value
+	for(int i = 0; i < ALength; ++i)
+		++C[A[i]];
+
+	// add left count (cumulatively) to get starting index
+	for(int i = 1; i < k; ++i)
+		C[i] += C[i-1];
+
+	// shift every starting index right one
+	for(int i = k; i > 0; --i)
+		C[i] = C[i-1];
+	C[0] = 0; // the lowest possible value will always have an index of 0
+
+	// place each element from ACopy into its correct sorted position in A
+	for(int i = 0; i < ALength; ++i) {
+		int currentValue = ACopy[i]; // the current value we're trying to sort
+		A[C[currentValue]] = currentValue; // place the value at final index
+		++C[currentValue]; // increment the starting index for the current value
+	}
+
+	// clear C, and ACopy from heap
+	delete[] C;
+	delete[] ACopy;
+}
+
 int main(int argc, char** argv) {
 	srand(time(NULL));
 	// int A[] = {8, 7, 6, 5, 4, 3, 2, 1};
@@ -314,6 +355,7 @@ int main(int argc, char** argv) {
 	testSort("HEAP SORT",             heapSort,            A, ALength);
 	testSort("QUICK SORT",            quickSort,           A, ALength);
 	testSort("RANDOMIZED QUICK SORT", randomizedQuickSort, A, ALength);
+	testSort("COUNTING SORT",         countingSort,        A, ALength);
 
 	return 0;
 }

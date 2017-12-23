@@ -119,6 +119,20 @@ author: Steven Avery
 - Instead of always using A[r] as the pivot, we swap a random element with A[r] before partitioning.
 
 ### Ch 8: Sorting in Linear Time
+- **Comparison Sorts**: the sorted order is determined based only on comparisons between the input elements.
+	- We can prove a comparison sort must make Ω(n lg(n)) comparisons.
+	- Everything we've looked at so far is a comparison sort.
+
+#### 8.2 Counting Sort (p 194)
+- **Expectd Running Time**: *O(n)* **Example In**: *src/sorting.cpp: countingSort*
+- Assumes that each input element is an integer in the range 0 to k.
+- **Stable** algorithm: numbers with the same value appear in the output array in the same order as they do in the input array.
+
+- **Algorithm**:
+	- Given a list of integers, where every interger is in the range 0..k.
+	- Count the occurence of each possible value and store it in an array (C).
+	- Use this count to get the starting index for each value.
+	- Copy elements of initial array to final proper location based on array C.
 
 ### Ch 9: Medians and Order Statistics
 
